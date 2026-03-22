@@ -1,295 +1,215 @@
 # Y2KLib
-**A pure black minimal Roblox UI library for script hubs.**
-
-> Clean. Fast. No fluff.
+**Pure black minimal Roblox UI Library**
 
 ---
 
-## 📦 Load the Library
-
-Paste this at the top of your script:
+## Load
 
 ```lua
-local Y2KLib = loadstring(game:HttpGet("YOUR_RAW_URL_HERE"))()
+local Y2KLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/y2klib/y2klib/refs/heads/main/main%20loader"))()
 ```
-
-Replace `YOUR_RAW_URL_HERE` with the raw link to your hosted `Y2KLib.lua` file (GitHub Raw, Pastefy, etc.)
 
 ---
 
-## 🪟 Creating a Window
+## Create Window
 
 ```lua
 local Window = Y2KLib:CreateWindow({
-    Title     = "My Hub",       -- Hub title shown in topbar
-    Game      = "Blox Fruits",  -- Game name shown in topbar
-    ToggleKey = Enum.KeyCode.RightShift, -- Key to show/hide GUI
+    Title     = "My Hub",
+    Game      = "Blox Fruits",
+    ToggleKey = Enum.KeyCode.RightShift,
 })
 ```
 
 | Option | Type | Description |
-|---|---|---|
-| `Title` | string | Title shown in the topbar |
+|--------|------|-------------|
+| `Title` | string | Window title |
 | `Game` | string | Game name shown in topbar |
-| `ToggleKey` | KeyCode | Key to toggle GUI visibility |
+| `ToggleKey` | Enum.KeyCode | Key to show/hide the window |
 
 ---
 
-## 📑 Creating Tabs
+## Create Tab
 
 ```lua
 local Tab = Window:CreateTab("Combat", "⚔️")
 ```
 
-| Argument | Type | Description |
-|---|---|---|
-| `name` | string | Tab name shown in sidebar |
-| `icon` | string | Optional emoji icon shown before name |
-
 ---
 
-## 🧩 Elements
-
-All elements are created on a Tab object.
-
----
+## Elements
 
 ### Section
-A labeled divider to group elements.
 ```lua
 Tab:CreateSection("Aimbot")
 ```
 
----
-
 ### Separator
-A plain thin divider line.
 ```lua
 Tab:CreateSeparator()
 ```
 
----
-
 ### Label
-A simple line of text.
 ```lua
-Tab:CreateLabel("This is a label.")
+Tab:CreateLabel("This is a label")
 ```
 
----
-
 ### Paragraph
-A block with an optional title and body text.
 ```lua
 Tab:CreateParagraph({
-    Title = "About",
-    Body  = "This hub was made with Y2KLib.",
+    Title = "Info",
+    Body  = "This is a paragraph with a title and body text.",
 })
 ```
 
----
-
 ### Toggle
-An ON/OFF switch.
 ```lua
 local MyToggle = Tab:CreateToggle({
     Name     = "Silent Aim",
     Default  = false,
     Callback = function(value)
-        -- value is true or false
-        _G.SilentAim = value
+        print("Toggle:", value)
     end,
 })
 
 -- API
-MyToggle:Set(true)   -- force a value
-MyToggle:Get()       -- returns current value
+MyToggle:Set(true)
+MyToggle:Get() -- returns bool
 ```
 
-| Option | Type | Description |
-|---|---|---|
-| `Name` | string | Element label |
-| `Default` | bool | Starting value |
-| `Callback` | function | Fires when toggled, passes `true`/`false` |
-
----
-
 ### Button
-A clickable button.
 ```lua
 Tab:CreateButton({
     Name     = "Kill All",
     Callback = function()
-        -- runs on click
+        print("Clicked!")
     end,
 })
 ```
 
----
-
 ### Slider
-A draggable number slider.
 ```lua
 local MySlider = Tab:CreateSlider({
     Name     = "Walk Speed",
     Min      = 16,
     Max      = 500,
     Default  = 16,
-    Suffix   = "",       -- optional unit label e.g. "px" "%" " st"
+    Suffix   = "",     -- optional e.g. "px" or "%"
     Callback = function(value)
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
+        print("Slider:", value)
     end,
 })
 
 -- API
-MySlider:Set(100)  -- force a value
-MySlider:Get()     -- returns current value
+MySlider:Set(100)
+MySlider:Get() -- returns number
 ```
 
-| Option | Type | Description |
-|---|---|---|
-| `Min` | number | Minimum value |
-| `Max` | number | Maximum value |
-| `Default` | number | Starting value |
-| `Suffix` | string | Text appended to value display |
-
----
-
 ### Dropdown
-A single or multi-select dropdown menu.
 ```lua
--- Single select
 local MyDropdown = Tab:CreateDropdown({
     Name     = "Target Part",
     Options  = {"Head", "Torso", "HumanoidRootPart"},
     Default  = "Head",
+    Multi    = false,  -- set true for multi-select
     Callback = function(value)
-        _G.AimPart = value
-    end,
-})
-
--- Multi select
-local MyMulti = Tab:CreateDropdown({
-    Name     = "Active Modes",
-    Options  = {"PvP", "PvE", "Farm", "Boss"},
-    Multi    = true,
-    Callback = function(selected)
-        -- selected is a table: {PvP = true, Farm = true, ...}
+        print("Selected:", value)
     end,
 })
 
 -- API
 MyDropdown:Set("Torso")
-MyDropdown:Get()     -- returns selected value
+MyDropdown:Get() -- returns string (or table if Multi = true)
 ```
 
-| Option | Type | Description |
-|---|---|---|
-| `Options` | table | List of choices |
-| `Default` | string | Starting selected value |
-| `Multi` | bool | Enables multi-select mode |
-
----
-
 ### Textbox
-A text input field.
 ```lua
-local MyBox = Tab:CreateTextbox({
-    Name        = "Teleport To",
+local MyTextbox = Tab:CreateTextbox({
+    Name        = "Player Name",
     Placeholder = "Username...",
     Default     = "",
-    Numeric     = false,  -- only allow numbers if true
-    Live        = false,  -- fires callback on every keystroke if true
+    Numeric     = false, -- true = numbers only
+    Live        = false, -- true = fires on every keystroke
     Callback    = function(value, enterPressed)
-        if enterPressed then
-            print("Entered:", value)
-        end
+        print("Input:", value)
     end,
 })
 
 -- API
-MyBox:Set("PlayerName")
-MyBox:Get()   -- returns current text
+MyTextbox:Set("Hello")
+MyTextbox:Get() -- returns string
 ```
 
----
-
 ### Keybind
-A button that listens for a key press. Click it, then press any key to bind.
 ```lua
-local MyKey = Tab:CreateKeybind({
+local MyKeybind = Tab:CreateKeybind({
     Name     = "Toggle Fly",
     Default  = Enum.KeyCode.F,
     Callback = function(key)
-        -- fires every time the bound key is pressed
-        print("Key pressed:", key.Name)
+        print("Pressed:", key.Name)
     end,
 })
 
 -- API
-MyKey:Set(Enum.KeyCode.G)
-MyKey:Get()   -- returns current KeyCode
+MyKeybind:Set(Enum.KeyCode.G)
+MyKeybind:Get() -- returns Enum.KeyCode
 ```
 
----
-
 ### ColorPicker
-A hue/saturation/value color picker.
 ```lua
 local MyColor = Tab:CreateColorPicker({
     Name     = "ESP Color",
     Default  = Color3.fromRGB(255, 100, 100),
     Callback = function(color)
-        _G.ESPColor = color
+        print("Color:", color)
     end,
 })
 
 -- API
 MyColor:Set(Color3.fromRGB(0, 255, 0))
-MyColor:Get()   -- returns current Color3
+MyColor:Get() -- returns Color3
 ```
 
----
-
 ### Config (Save / Load)
-Built-in save and load buttons. Saves to executor filesystem.
 ```lua
 Tab:CreateConfig({
     Callback = function(data)
-        -- fires after a config is loaded
         print("Config loaded!")
     end,
 })
 ```
 
-Configs are saved to: `Y2KLib/YourHubTitle/configname.json`
-
 ---
 
-## 🔔 Notifications
-
-Send a toast notification from anywhere in your script.
+## Notifications
 
 ```lua
 Window:Notify("Title", "Description", "success", 3)
 ```
 
-Or using a table:
+| Type | Color |
+|------|-------|
+| `info` | White |
+| `success` | Green |
+| `warning` | Orange |
+| `error` | Red |
+
+Or as a table:
 ```lua
 Window:Notify({
-    Title       = "Teleport",
-    Description = "Arrived at destination",
-    Type        = "success",   -- "info" | "success" | "error" | "warning"
+    Title       = "Done",
+    Description = "Action completed.",
+    Type        = "success",
     Duration    = 3,
 })
 ```
 
 ---
 
-## 📋 Full Example
+## Full Example
 
 ```lua
-local Y2KLib = loadstring(game:HttpGet("YOUR_RAW_URL_HERE"))()
+local Y2KLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/y2klib/y2klib/refs/heads/main/main%20loader"))()
 
 local Window = Y2KLib:CreateWindow({
     Title     = "Y2KLib",
@@ -297,17 +217,19 @@ local Window = Y2KLib:CreateWindow({
     ToggleKey = Enum.KeyCode.RightShift,
 })
 
-local Combat = Window:CreateTab("Combat", "⚔️")
+local Tab = Window:CreateTab("Combat", "⚔️")
 
-Combat:CreateSection("Aimbot")
+Tab:CreateSection("Aimbot")
 
-Combat:CreateToggle({
+Tab:CreateToggle({
     Name     = "Silent Aim",
     Default  = false,
-    Callback = function(v) _G.SilentAim = v end,
+    Callback = function(v)
+        _G.SilentAim = v
+    end,
 })
 
-Combat:CreateSlider({
+Tab:CreateSlider({
     Name     = "Walk Speed",
     Min      = 16,
     Max      = 500,
@@ -317,67 +239,35 @@ Combat:CreateSlider({
     end,
 })
 
-Combat:CreateDropdown({
+Tab:CreateDropdown({
     Name     = "Target Part",
     Options  = {"Head", "Torso", "HumanoidRootPart"},
     Default  = "Head",
-    Callback = function(v) _G.AimPart = v end,
-})
-
-Combat:CreateButton({
-    Name     = "Kill All",
-    Callback = function()
-        Window:Notify("Kill All", "Executed!", "success", 2)
+    Callback = function(v)
+        _G.AimPart = v
     end,
 })
 
-local Settings = Window:CreateTab("Settings", "⚙️")
-
-Settings:CreateKeybind({
-    Name     = "Toggle Fly",
-    Default  = Enum.KeyCode.F,
-    Callback = function() print("Fly toggled") end,
+Tab:CreateButton({
+    Name     = "Rejoin",
+    Callback = function()
+        game:GetService("TeleportService"):Teleport(game.PlaceId)
+    end,
 })
 
-Settings:CreateColorPicker({
-    Name     = "ESP Color",
-    Default  = Color3.fromRGB(255, 100, 100),
-    Callback = function(c) _G.ESPColor = c end,
-})
-
-Settings:CreateConfig({})
-
-Window:Notify("Y2KLib", "Loaded successfully!", "success", 3)
+Window:Notify("Y2KLib", "Loaded!", "success", 3)
 ```
 
 ---
 
-## ⌨️ Default Keybinds
+## Keybinds
 
 | Key | Action |
-|---|---|
-| `RightShift` | Toggle GUI visibility (default, can be changed via `ToggleKey`) |
+|-----|--------|
+| `RightShift` (default) | Toggle window |
+| `─` button | Minimize |
+| `✕` button | Close + autosave config |
 
 ---
 
-## 📁 File Structure
-
-```
-Y2KLib/
-└── YourHubTitle/
-    ├── autosave.json   ← saved on GUI close
-    └── default.json    ← saved manually via CreateConfig
-```
-
----
-
-## ✅ Tested Executors
-- Delta
-- Fluxus
-- Synapse X
-- Arc
-
----
-
-## 📄 License
-Free to use and modify. Credit appreciated but not required.
+*Y2KLib — Pure Black Minimal*
