@@ -6,7 +6,7 @@
 ## Load
 
 ```lua
-local Y2KLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/y2klib/y2klib/refs/heads/main/main%20loader"))()
+local Y2KLib = loadstring(game:HttpGet("https://pastebin.com/raw/UBGys3f2"))()
 ```
 
 ---
